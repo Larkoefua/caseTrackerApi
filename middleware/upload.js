@@ -29,16 +29,21 @@ const storage = new CloudinaryStorage({
     const isDocument = file.mimetype.includes('pdf') || 
                       file.mimetype.includes('msword') || 
                       file.mimetype.includes('wordprocessingml');
-
+    
+    // Get file extension
+    const fileExtension = file.originalname.split('.').pop().toLowerCase();
+    
     return {
       folder: 'case-tracker',
       allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
       resource_type: isImage ? 'image' : 'raw',
-      format: isImage ? undefined : file.originalname.split('.').pop(),
+      format: fileExtension,
       transformation: isImage ? [
         { quality: 'auto' },
         { fetch_format: 'auto' }
-      ] : undefined
+      ] : undefined,
+      use_filename: true,
+      unique_filename: true
     };
   }
 });
