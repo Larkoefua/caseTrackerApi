@@ -23,15 +23,24 @@ cloudinary.config({
 // Configure storage
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
-    folder: 'case-tracker',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-    resource_type: 'auto',
-    transformation: [
-      { quality: 'auto' },
-      { fetch_format: 'auto' }
-    ]
-  },
+  params: (req, file) => {
+    // Determine resource type based on file type
+    const isImage = file.mimetype.startsWith('image/');
+    const isDocument = file.mimetype.includes('pdf') || 
+                      file.mimetype.includes('msword') || 
+                      file.mimetype.includes('wordprocessingml');
+
+    return {
+      folder: 'case-tracker',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+      resource_type: isImage ? 'image' : 'raw',
+      format: isImage ? undefined : file.originalname.split('.').pop(),
+      transformation: isImage ? [
+        { quality: 'auto' },
+        { fetch_format: 'auto' }
+      ] : undefined
+    };
+  }
 });
 
 // File filter
