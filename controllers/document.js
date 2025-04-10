@@ -71,14 +71,16 @@ const uploadDocument = async (req, res) => {
       isAutomatic: false,
     });
 
-    // Get the secure URL with the correct extension
-    const secureUrl = await cloudinary.url(newDocument.publicId, {
+    // Generate a signed URL for the file
+    const signedUrl = cloudinary.url(newDocument.publicId, {
       secure: true,
-      resource_type: 'raw'
+      resource_type: 'raw',
+      sign_url: true,
+      type: 'authenticated'
     });
 
-    // Update the document with the secure URL
-    newDocument.fileUrl = secureUrl;
+    // Update the document with the signed URL
+    newDocument.fileUrl = signedUrl;
     await newDocument.save();
 
     res.status(201).json({
