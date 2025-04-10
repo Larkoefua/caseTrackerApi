@@ -34,7 +34,7 @@ const uploadDocument = async (req, res) => {
       caseId: caseItem._id,
       title: title,
       documentType: documentType,
-      fileUrl: req.file.path + '.' + req.file.originalname.split('.').pop().toLowerCase(),
+      fileUrl: req.file.path,
       publicId: req.file.filename,
       uploadedBy: req.user._id,
     });
@@ -47,6 +47,16 @@ const uploadDocument = async (req, res) => {
       createdBy: req.user._id,
       isAutomatic: false,
     });
+
+    // Get the secure URL with the correct extension
+    const secureUrl = await cloudinary.url(newDocument.publicId, {
+      secure: true,
+      resource_type: 'raw'
+    });
+
+    // Update the document with the secure URL
+    newDocument.fileUrl = secureUrl;
+    await newDocument.save();
 
     res.status(201).json({
       success: true,

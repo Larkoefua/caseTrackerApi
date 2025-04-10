@@ -32,6 +32,9 @@ const storage = new CloudinaryStorage({
     
     // Get file extension
     const fileExtension = file.originalname.split('.').pop().toLowerCase();
+    const timestamp = Date.now();
+    const uniqueId = Math.random().toString(36).substring(2, 8);
+    const filename = `${file.originalname.split('.')[0]}_${timestamp}_${uniqueId}`;
     
     return {
       folder: 'case-tracker',
@@ -42,9 +45,9 @@ const storage = new CloudinaryStorage({
         { quality: 'auto' },
         { fetch_format: 'auto' }
       ] : undefined,
-      use_filename: true,
-      unique_filename: true,
-      filename_override: `${file.originalname.split('.')[0]}_${Date.now()}.${fileExtension}`
+      public_id: `${filename}.${fileExtension}`,
+      use_filename: false,
+      unique_filename: false
     };
   }
 });
