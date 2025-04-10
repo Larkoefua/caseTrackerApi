@@ -23,32 +23,12 @@ cloudinary.config({
 // Configure storage
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: (req, file) => {
-    // Determine resource type based on file type
-    const isImage = file.mimetype.startsWith('image/');
-    const isDocument = file.mimetype.includes('pdf') || 
-                      file.mimetype.includes('msword') || 
-                      file.mimetype.includes('wordprocessingml');
-    
-    // Get file extension
-    const fileExtension = file.originalname.split('.').pop().toLowerCase();
-    const timestamp = Date.now();
-    const uniqueId = Math.random().toString(36).substring(2, 8);
-    const filename = `${file.originalname.split('.')[0]}_${timestamp}_${uniqueId}`;
-    
-    return {
-      folder: 'case-tracker',
-      allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-      resource_type: isImage ? 'image' : 'raw',
-      format: fileExtension,
-      transformation: isImage ? [
-        { quality: 'auto' },
-        { fetch_format: 'auto' }
-      ] : undefined,
-      public_id: `${filename}.${fileExtension}`,
-      use_filename: false,
-      unique_filename: false
-    };
+  params: {
+    folder: 'case-tracker',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+    resource_type: 'auto',
+    use_filename: true,
+    unique_filename: true
   }
 });
 
@@ -68,7 +48,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 5 * 1024 * 1024 // 5MB limit
   }
 });
 

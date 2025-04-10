@@ -9,27 +9,45 @@ import { cloudinary } from '../middleware/upload.js';
 const uploadDocument = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'No file uploaded' 
+      });
     }
 
     const { caseId, title, documentType } = req.body;
 
     if (!caseId || !title || !documentType) {
-      return res.status(400).json({ message: 'Missing required fields' });
+      return res.status(400).json({ 
+        success: false,
+        message: 'Missing required fields' 
+      });
     }
+
+    console.log('Uploading file:', {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    });
 
     const caseItem = await CaseModel.findById(caseId);
 
     if (!caseItem) {
-      return res.status(404).json({ message: 'Case not found' });
+      return res.status(404).json({ 
+        success: false,
+        message: 'Case not found' 
+      });
     }
 
     // Check if user is authorized
     if (req.user.role !== 'admin' && caseItem.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: 'Not authorized to upload to this case' });
+      return res.status(403).json({ 
+        success: false,
+        message: 'Not authorized to upload to this case' 
+      });
     }
 
-    // Create document record
+    // Create document record with initial file URL
     const newDocument = await DocumentModel.create({
       caseId: caseItem._id,
       title: title,
@@ -37,6 +55,11 @@ const uploadDocument = async (req, res) => {
       fileUrl: req.file.path,
       publicId: req.file.filename,
       uploadedBy: req.user._id,
+    });
+
+    console.log('Document created:', {
+      fileUrl: newDocument.fileUrl,
+      publicId: newDocument.publicId
     });
 
     // Create an update for the document upload
