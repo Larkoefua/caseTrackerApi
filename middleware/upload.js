@@ -28,7 +28,9 @@ const storage = new CloudinaryStorage({
     allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
     resource_type: 'auto',
     use_filename: true,
-    unique_filename: true
+    unique_filename: true,
+    type: 'upload',
+    sign_url: false
   }
 });
 
