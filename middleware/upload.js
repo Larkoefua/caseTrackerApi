@@ -43,7 +43,8 @@ const storage = new CloudinaryStorage({
         { fetch_format: 'auto' }
       ] : undefined,
       use_filename: true,
-      unique_filename: true
+      unique_filename: true,
+      filename_override: `${file.originalname.split('.')[0]}_${Date.now()}.${fileExtension}`
     };
   }
 });

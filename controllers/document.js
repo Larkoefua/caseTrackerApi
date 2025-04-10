@@ -34,7 +34,7 @@ const uploadDocument = async (req, res) => {
       caseId: caseItem._id,
       title: title,
       documentType: documentType,
-      fileUrl: req.file.path,
+      fileUrl: req.file.path + '.' + req.file.originalname.split('.').pop().toLowerCase(),
       publicId: req.file.filename,
       uploadedBy: req.user._id,
     });
