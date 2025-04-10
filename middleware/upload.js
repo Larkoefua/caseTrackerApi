@@ -23,41 +23,23 @@ cloudinary.config({
 // Configure storage
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: (req, file) => {
-    // Determine resource type based on file extension
-    const fileExt = file.originalname.split('.').pop().toLowerCase();
-    const isImage = ['jpg', 'jpeg', 'png'].includes(fileExt);
-    const isDocument = ['pdf', 'doc', 'docx'].includes(fileExt);
-
-    return {
-      folder: 'case-tracker',
-      allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
-      resource_type: isImage ? 'image' : 'raw',
-      use_filename: true,
-      unique_filename: true,
-      format: fileExt
-    };
+  params: {
+    folder: 'case-tracker',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+    resource_type: 'auto',
+    use_filename: true,
+    unique_filename: true
   }
 });
 
 // File filter
 const fileFilter = (req, file, cb) => {
-  // Get file extension
-  const fileExt = file.originalname.split('.').pop().toLowerCase();
-  const allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'];
+  const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
   
-  if (allowedExtensions.includes(fileExt)) {
-    console.log('File accepted:', {
-      filename: file.originalname,
-      extension: fileExt
-    });
+  if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    console.log('File rejected:', {
-      filename: file.originalname,
-      extension: fileExt
-    });
-    cb(new Error(`Invalid file type. Allowed extensions are: ${allowedExtensions.join(', ')}`), false);
+    cb(new Error('Invalid file type. Only JPEG, PNG, PDF, and DOC files are allowed.'), false);
   }
 };
 
