@@ -9,6 +9,10 @@ const caseSchema = new Schema(
       unique: true,
       index: true,
     },
+    caseType: {
+      type: String,
+      required: true
+    },
     user: {
       type: Types.ObjectId,
       required: [true, 'User ID is required'],
