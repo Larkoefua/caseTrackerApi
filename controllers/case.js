@@ -18,6 +18,7 @@ const createCase = async (req, res) => {
     const newCase = await CaseModel.create({
       title,
       description,
+      caseType,
       user: req.user._id,
       courtInfo: courtInfo || {},
     });
